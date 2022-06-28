@@ -1,13 +1,17 @@
 package com.jmunoz.tddautenticacion.user;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class UserController {
 
-    @PostMapping("/api/1.0/users")
-    void createUser() {
+    @Autowired
+    UserService userService;
 
+    @PostMapping("/api/1.0/users")
+    void createUser(User user) {
+        userService.save(user);
     }
 }
