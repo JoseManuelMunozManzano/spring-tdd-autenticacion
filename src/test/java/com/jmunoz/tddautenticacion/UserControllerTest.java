@@ -1,5 +1,6 @@
 package com.jmunoz.tddautenticacion;
 
+import com.jmunoz.tddautenticacion.user.GenericResponse;
 import com.jmunoz.tddautenticacion.user.User;
 import com.jmunoz.tddautenticacion.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,5 +57,14 @@ public class UserControllerTest {
         testRestTemplate.postForEntity(API_1_0_USERS, user, Object.class);
 
         assertThat(userRepository.count()).isEqualTo(1);
+    }
+
+    @Test
+    void postUser_WhenUserIsValid_receiveSuccessMessage() {
+        User user = createValidUser();
+
+        ResponseEntity<GenericResponse> response = testRestTemplate.postForEntity(API_1_0_USERS, user, GenericResponse.class);
+
+        assertThat(response.getBody().getMessage()).isNotNull();
     }
 }

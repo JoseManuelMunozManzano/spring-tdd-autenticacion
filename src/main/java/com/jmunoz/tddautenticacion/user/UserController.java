@@ -11,7 +11,8 @@ public class UserController {
     UserService userService;
 
     @PostMapping("/api/1.0/users")
-    void createUser(User user) {
+    public GenericResponse createUser(User user) {
         userService.save(user);
+        return new GenericResponse("User saved");
     }
 }
