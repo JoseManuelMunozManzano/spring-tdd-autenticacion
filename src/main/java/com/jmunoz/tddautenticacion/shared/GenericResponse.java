@@ -1,4 +1,4 @@
-package com.jmunoz.tddautenticacion.user;
+package com.jmunoz.tddautenticacion.shared;
 
 public class GenericResponse {
     private String message;

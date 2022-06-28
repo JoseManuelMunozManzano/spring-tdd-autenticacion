@@ -1,6 +1,6 @@
 package com.jmunoz.tddautenticacion;
 
-import com.jmunoz.tddautenticacion.user.GenericResponse;
+import com.jmunoz.tddautenticacion.shared.GenericResponse;
 import com.jmunoz.tddautenticacion.user.User;
 import com.jmunoz.tddautenticacion.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
