@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -66,5 +68,17 @@ public class UserControllerTest {
         ResponseEntity<GenericResponse> response = testRestTemplate.postForEntity(API_1_0_USERS, user, GenericResponse.class);
 
         assertThat(response.getBody().getMessage()).isNotNull();
+    }
+
+    @Test
+    void postUser_WhenUserIsValid_passwordIsHashedInDatabase() {
+        User user = createValidUser();
+
+        testRestTemplate.postForEntity(API_1_0_USERS, user, Object.class);
+
+        List<User> users = userRepository.findAll();
+        User inDb = users.get(0);
+
+        assertThat(inDb.getPassword()).isNotEqualTo(user.getPassword());
     }
 }
