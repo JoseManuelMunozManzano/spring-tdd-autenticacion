@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -139,6 +141,42 @@ public class UserControllerTest {
         User user = createValidUser();
         // mínimo 8 caracteres, con mayúsculas, minúsculas y números
         user.setPassword("P4ssd");
+
+        ResponseEntity<Object> response = testRestTemplate.postForEntity(API_1_0_USERS, user, Object.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void postUser_whenUserHasUsernameThanExceedsTheLengthLimit_receiveBadRequest() {
+        User user = createValidUser();
+        // máximo 255 caracteres
+        String valueOf256Chars = IntStream.rangeClosed(1, 256).mapToObj(x -> "a").collect(Collectors.joining());
+        user.setUsername(valueOf256Chars);
+
+        ResponseEntity<Object> response = testRestTemplate.postForEntity(API_1_0_USERS, user, Object.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void postUser_whenUserHasDisplayNameThanExceedsTheLengthLimit_receiveBadRequest() {
+        User user = createValidUser();
+        // máximo 255 caracteres
+        String valueOf256Chars = IntStream.rangeClosed(1, 256).mapToObj(x -> "a").collect(Collectors.joining());
+        user.setDisplayName(valueOf256Chars);
+
+        ResponseEntity<Object> response = testRestTemplate.postForEntity(API_1_0_USERS, user, Object.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void postUser_whenUserHasPasswordThanExceedsTheLengthLimit_receiveBadRequest() {
+        User user = createValidUser();
+        // máximo 255 caracteres
+        String valueOf256Chars = IntStream.rangeClosed(1, 256).mapToObj(x -> "a").collect(Collectors.joining());
+        user.setPassword(valueOf256Chars + "A1");
 
         ResponseEntity<Object> response = testRestTemplate.postForEntity(API_1_0_USERS, user, Object.class);
 
