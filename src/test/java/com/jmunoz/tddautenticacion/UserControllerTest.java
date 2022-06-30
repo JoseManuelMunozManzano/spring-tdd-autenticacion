@@ -43,7 +43,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void postUser_WhenUserIsValid_receiveOk() {
+    void postUser_whenUserIsValid_receiveOk() {
         User user = createValidUser();
 
         // Se pasa url, request, response y (en este caso no) variables de url
@@ -53,7 +53,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void postUser_WhenUserIsValid_userSavedToDatabase() {
+    void postUser_whenUserIsValid_userSavedToDatabase() {
         User user = createValidUser();
 
         testRestTemplate.postForEntity(API_1_0_USERS, user, Object.class);
@@ -62,7 +62,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void postUser_WhenUserIsValid_receiveSuccessMessage() {
+    void postUser_whenUserIsValid_receiveSuccessMessage() {
         User user = createValidUser();
 
         ResponseEntity<GenericResponse> response = testRestTemplate.postForEntity(API_1_0_USERS, user, GenericResponse.class);
@@ -71,7 +71,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void postUser_WhenUserIsValid_passwordIsHashedInDatabase() {
+    void postUser_whenUserIsValid_passwordIsHashedInDatabase() {
         User user = createValidUser();
 
         testRestTemplate.postForEntity(API_1_0_USERS, user, Object.class);
@@ -83,7 +83,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void postUser_WhenUserHasNullUsername_receiveBadRequest() {
+    void postUser_whenUserHasNullUsername_receiveBadRequest() {
         User user = createValidUser();
         user.setUsername(null);
 
@@ -93,7 +93,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void postUser_WhenUserHasNullDisplayName_receiveBadRequest() {
+    void postUser_whenUserHasNullDisplayName_receiveBadRequest() {
         User user = createValidUser();
         user.setDisplayName(null);
 
@@ -103,9 +103,42 @@ public class UserControllerTest {
     }
 
     @Test
-    void postUser_WhenUserHasNullPassword_receiveBadRequest() {
+    void postUser_whenUserHasNullPassword_receiveBadRequest() {
         User user = createValidUser();
         user.setPassword(null);
+
+        ResponseEntity<Object> response = testRestTemplate.postForEntity(API_1_0_USERS, user, Object.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void postUser_whenUserHasUsernameWithLessThanRequired_receiveBadRequest() {
+        User user = createValidUser();
+        // mínimo 4 caracteres
+        user.setUsername("abc");
+
+        ResponseEntity<Object> response = testRestTemplate.postForEntity(API_1_0_USERS, user, Object.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void postUser_whenUserHasDisplayNameWithLessThanRequired_receivedBadRequest() {
+        User user = createValidUser();
+        // mínimo 4 caracteres
+        user.setDisplayName("abc");
+
+        ResponseEntity<Object> response = testRestTemplate.postForEntity(API_1_0_USERS, user, Object.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void postUser_whenUserHasPasswordWithLessThenRequired_receiveBadRequest() {
+        User user = createValidUser();
+        // mínimo 8 caracteres, con mayúsculas, minúsculas y números
+        user.setPassword("P4ssd");
 
         ResponseEntity<Object> response = testRestTemplate.postForEntity(API_1_0_USERS, user, Object.class);
 
