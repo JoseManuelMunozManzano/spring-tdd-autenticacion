@@ -182,4 +182,37 @@ public class UserControllerTest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
+
+    @Test
+    void postUser_whenUserHasPasswordWithAllLowercase_receiveBadRequest() {
+        User user = createValidUser();
+
+        user.setPassword("alllowercase");
+
+        ResponseEntity<Object> response = testRestTemplate.postForEntity(API_1_0_USERS, user, Object.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void postUser_whenUserHasPasswordWithAllUppercase_receiveBadRequest() {
+        User user = createValidUser();
+
+        user.setPassword("ALLUPPERCASE");
+
+        ResponseEntity<Object> response = testRestTemplate.postForEntity(API_1_0_USERS, user, Object.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void postUser_whenUserHasPasswordWithAllNumbers_receiveBadRequest() {
+        User user = createValidUser();
+
+        user.setPassword("1234567890");
+
+        ResponseEntity<Object> response = testRestTemplate.postForEntity(API_1_0_USERS, user, Object.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
 }
