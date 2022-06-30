@@ -19,6 +19,7 @@ public class User {
     @NotNull
     private String displayName;
 
+    @NotNull
     private String password;
 
     public User() {
