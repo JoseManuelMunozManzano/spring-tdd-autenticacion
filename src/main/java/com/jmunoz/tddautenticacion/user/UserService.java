@@ -16,11 +16,6 @@ public class UserService {
     }
 
     public User save(User user) {
-        User inDb = userRepository.findByUsername(user.getUsername());
-        if (inDb != null) {
-            throw new DuplicateUsernameException();
-        }
-
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
