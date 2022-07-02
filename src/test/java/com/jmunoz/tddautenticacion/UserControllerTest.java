@@ -9,11 +9,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -237,5 +239,43 @@ public class UserControllerTest {
         ResponseEntity<ApiError> response = postSignUp(user, ApiError.class);
 
         assertThat(response.getBody().getValidationErrors().size()).isEqualTo(3);
+    }
+
+    @Test
+    void postUser_whenUserHasNullUsername_receiveMessageOfNullErrorForUsername() {
+        User user = createValidUser();
+        user.setUsername(null);
+
+        ResponseEntity<ApiError> response = postSignUp(user, ApiError.class);
+
+        Map<String, String> validationErrors = response.getBody().getValidationErrors();
+
+        assertThat(validationErrors.get("username")).isEqualTo("Username cannot be null");
+    }
+
+    @Test
+    void postUser_whenUserHanInvalidLengthUsername_receiveGenericMessageOfSizeError() {
+        User user = createValidUser();
+        user.setUsername("abc");
+
+        ResponseEntity<ApiError> response = postSignUp(user, ApiError.class);
+
+        Map<String, String> validationErrors = response.getBody().getValidationErrors();
+
+        assertThat(validationErrors.get("username"))
+                .isEqualTo("It must have minimum 4 and maximum 255 characters");
+    }
+
+    @Test
+    void postUser_whenUserHasInvalidPassword_receiveMessageOfPasswordPatternError() {
+        User user = createValidUser();
+        user.setPassword("alllowercase");
+
+        ResponseEntity<ApiError> response = postSignUp(user, ApiError.class);
+
+        Map<String, String> validationErrors = response.getBody().getValidationErrors();
+
+        assertThat(validationErrors.get("password"))
+                .isEqualTo("Password must have at least one uppercase, one lowercase letter and one number");
     }
 }
