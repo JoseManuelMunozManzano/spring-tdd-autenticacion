@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface UniqueUsername {
 
-    String message() default "";
+    String message() default "{tdd-autenticacion.constraints.username.UniqueUsername.message}";
 
     Class<?>[] groups() default {};
 
