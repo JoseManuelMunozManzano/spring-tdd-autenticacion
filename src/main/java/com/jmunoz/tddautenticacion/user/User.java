@@ -1,5 +1,7 @@
 package com.jmunoz.tddautenticacion.user;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -10,15 +12,18 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonView(Views.Base.class)
     private long id;
 
     @NotNull(message = "{tdd-autenticacion.constraints.username.NotNull.message}")
     @Size(min = 4, max = 255)
     @UniqueUsername
+    @JsonView(Views.Base.class)
     private String username;
 
     @NotNull
     @Size(min = 4, max = 255)
+    @JsonView(Views.Base.class)
     private String displayName;
 
     @NotNull
@@ -27,6 +32,7 @@ public class User {
             message = "{tdd-autenticacion.constraints.password.Pattern.message}")
     private String password;
 
+    @JsonView(Views.Base.class)
     private String image;
 
     public User() {

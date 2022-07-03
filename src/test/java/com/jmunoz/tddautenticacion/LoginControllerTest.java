@@ -5,7 +5,6 @@ import com.jmunoz.tddautenticacion.user.User;
 import com.jmunoz.tddautenticacion.user.UserRepository;
 import com.jmunoz.tddautenticacion.user.UserService;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -146,5 +145,34 @@ public class LoginControllerTest {
         String displayName = (String) body.get("displayName");
 
         assertThat(displayName).isEqualTo(inDb.getDisplayName());
+    }
+
+    @Test
+    void postLogin_withValidCredentials_receiveLoggedInUsersUsername() {
+        User inDb = userService.save(TestUtil.createValidUser());
+        authenticate();
+
+        ResponseEntity<Map<String, Object>> response =
+                login(new ParameterizedTypeReference<Map<String, Object>>() {});
+
+        Map<String, Object> body = response.getBody();
+
+        String username = (String) body.get("username");
+
+        assertThat(username).isEqualTo(inDb.getUsername());
+    }
+
+    // IMPORTANTE!!! No debemos recibir el password
+    @Test
+    void postLogin_withValidCredentials_notReceiveLoggedInPassword() {
+        User inDb = userService.save(TestUtil.createValidUser());
+        authenticate();
+
+        ResponseEntity<Map<String, Object>> response =
+                login(new ParameterizedTypeReference<Map<String, Object>>() {});
+
+        Map<String, Object> body = response.getBody();
+
+        assertThat(body.containsKey("password")).isFalse();
     }
 }
