@@ -32,10 +32,6 @@ public class CustomUserDetails implements UserDetails {
         return user.getUsername();
     }
 
-    public String getDisplayName() {
-        return user.getDisplayName();
-    }
-
     @Override
     public boolean isAccountNonExpired() {
         return true;
