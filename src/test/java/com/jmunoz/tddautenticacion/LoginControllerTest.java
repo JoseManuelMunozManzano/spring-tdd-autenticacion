@@ -1,6 +1,10 @@
 package com.jmunoz.tddautenticacion;
 
 import com.jmunoz.tddautenticacion.error.ApiError;
+import com.jmunoz.tddautenticacion.user.User;
+import com.jmunoz.tddautenticacion.user.UserRepository;
+import com.jmunoz.tddautenticacion.user.UserService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +25,12 @@ public class LoginControllerTest {
     @Autowired
     TestRestTemplate testRestTemplate;
 
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    UserService userService;
+
     public <T>ResponseEntity<T> login(Class<T> responseType) {
         return testRestTemplate.postForEntity(API_1_0_USERS, null, responseType);
     }
@@ -29,6 +39,12 @@ public class LoginControllerTest {
         return testRestTemplate
                 .getRestTemplate().getInterceptors()
                 .add(new BasicAuthenticationInterceptor("test-user", "P4ssword"));
+    }
+
+    @BeforeEach
+    void setUp() {
+        userRepository.deleteAll();
+        testRestTemplate.getRestTemplate().getInterceptors().clear();
     }
 
     @Test
@@ -67,5 +83,20 @@ public class LoginControllerTest {
         ResponseEntity<Object> response = login(Object.class);
 
         assertThat(response.getHeaders().containsKey("WWW-Authenticate")).isFalse();
+    }
+
+    @Test
+    void postLogin_withValidCredentials_receiveOk() {
+        User user = new User();
+        user.setUsername("test-user");
+        user.setDisplayName("test-display");
+        user.setPassword("P4ssword");
+
+        userService.save(user);
+        authenticate();
+
+        ResponseEntity<Object> response = login(Object.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 }
