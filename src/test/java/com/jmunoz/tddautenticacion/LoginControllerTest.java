@@ -4,6 +4,7 @@ import com.jmunoz.tddautenticacion.error.ApiError;
 import com.jmunoz.tddautenticacion.user.User;
 import com.jmunoz.tddautenticacion.user.UserRepository;
 import com.jmunoz.tddautenticacion.user.UserService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,8 +50,8 @@ public class LoginControllerTest {
                 .add(new BasicAuthenticationInterceptor("test-user", "P4ssword"));
     }
 
-    @BeforeEach
-    void setUp() {
+    @AfterEach
+    void tearDown() {
         userRepository.deleteAll();
         testRestTemplate.getRestTemplate().getInterceptors().clear();
     }
@@ -115,5 +116,35 @@ public class LoginControllerTest {
         Integer id = (Integer) body.get("id");
 
         assertThat(id).isEqualTo(inDb.getId());
+    }
+
+    @Test
+    void postLogin_withValidCredentials_receiveLoggedInUsersImage() {
+        User inDb = userService.save(TestUtil.createValidUser());
+        authenticate();
+
+        ResponseEntity<Map<String, Object>> response =
+                login(new ParameterizedTypeReference<Map<String, Object>>() {});
+
+        Map<String, Object> body = response.getBody();
+
+        String image = (String) body.get("image");
+
+        assertThat(image).isEqualTo(inDb.getImage());
+    }
+
+    @Test
+    void postLogin_withValidCredentials_receiveLoggedInUsersDisplayName() {
+        User inDb = userService.save(TestUtil.createValidUser());
+        authenticate();
+
+        ResponseEntity<Map<String, Object>> response =
+                login(new ParameterizedTypeReference<Map<String, Object>>() {});
+
+        Map<String, Object> body = response.getBody();
+
+        String displayName = (String) body.get("displayName");
+
+        assertThat(displayName).isEqualTo(inDb.getDisplayName());
     }
 }
