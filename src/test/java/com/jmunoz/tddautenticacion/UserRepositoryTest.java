@@ -28,7 +28,7 @@ public class UserRepositoryTest {
         user.setDisplayName("test-display");
         user.setPassword("P4ssword");
 
-        testEntityManager.persist(user);
+        testEntityManager.persist(TestUtil.createValidUser());
 
         User inDb = userRepository.findByUsername("test-user");
         assertThat(inDb).isNotNull();
