@@ -1,5 +1,6 @@
 package com.jmunoz.tddautenticacion;
 
+import com.jmunoz.tddautenticacion.error.ApiError;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -44,5 +45,12 @@ public class LoginControllerTest {
         ResponseEntity<Object> response = login(Object.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    void postLogin_withoutUserCredentials_receiveApiError() {
+        ResponseEntity<ApiError> response = login(ApiError.class);
+
+        assertThat(response.getBody().getUrl()).isEqualTo(API_1_0_USERS);
     }
 }
